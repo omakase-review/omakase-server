@@ -2,6 +2,7 @@ dist
 node_modules
 .env
 logs
+dbdata
 
 .DS_Store
 *.pem
