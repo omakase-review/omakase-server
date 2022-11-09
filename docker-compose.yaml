@@ -25,8 +25,8 @@ services:
             MYSQL_PASSWORD: ${MYSQL_PASSWORD}
             MYSQL_DATABASE: ${MYSQL_DATABASE}
             TZ: Asia/Seoul
-        env_file:
-            - .env
+        # env_file:
+        #     - .env
         command:
             - --character-set-server=utf8mb4
             - --collation-server=utf8mb4_unicode_ci
@@ -38,7 +38,7 @@ services:
         container_name: omakase-server
         build:
             context: ./
-        restart: unless-stopped
+        restart: always
         command: npm run start
         ports:
             - 3000:${PORT}

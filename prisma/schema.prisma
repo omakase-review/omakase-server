@@ -6,14 +6,70 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
   id Int @id @db.UnsignedInt @default(autoincrement())
-  name String?
+  email String @db.VarChar(100) @unique
+  name String? @db.VarChar(100)
+
+  reviews Review[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime?         @map("updated_at")
+  deletedAt        DateTime?         @map("deleted_at")
+
+  @@map("users")
 }
 
-model Post {
+model Restaurant {
   id Int @id @db.UnsignedInt @default(autoincrement())
-  name String?
+  name String? @db.VarChar(100)
+  address String? @db.VarChar(100)
+  gu String? @db.VarChar(10)
+  lunchPrice Int? @db.UnsignedInt @map("lunch_price")
+  dinnerPrice Int? @db.UnsignedInt @map("dinner_price")
+  corkCharge String? @db.VarChar(100) @map("cork_charge")
+
+  reviews Review[]
+  dayOff String? @db.VarChar(100) @map("day_off")
+  
+  phoneNumber String? @db.VarChar(100) @map("phone_number")
+  openingHours String? @db.VarChar(100) @map("opening_hours")
+  parking Boolean? @default(false)
+  snss Sns[]
+
+  openedAt DateTime? @map("opened_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime?         @map("updated_at")
+  deletedAt        DateTime?         @map("deleted_at")
+
+  @@map("restaurants")
+}
+
+model Sns {
+  id Int @id @db.UnsignedInt @default(autoincrement())
+  owner Restaurant @relation(fields: [ownerId], references: [id])
+  ownerId Int @db.UnsignedInt
+
+  link String @db.VarChar(100)
+
+  @@map("snss")
+}
+model Review {
+  id Int @id @db.UnsignedInt @default(autoincrement())
+  scope Decimal @db.Decimal(1, 1)
+
+  user User @relation(fields: [userId], references: [id])
+  userId Int @db.UnsignedInt
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId Int @db.UnsignedInt
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime?         @map("updated_at")
+  deletedAt        DateTime?         @map("deleted_at")
+
+  @@map("reviews")
 }
