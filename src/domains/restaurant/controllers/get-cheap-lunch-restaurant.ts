@@ -9,7 +9,7 @@ export const getCheapLunchRestaurant = async (req: Request, res: Response) => {
             name: true,
             reviews: {
                 select: {
-                    scope: true
+                    score: true
                 }
             }
         },
