@@ -33,6 +33,7 @@ model Restaurant {
   corkCharge String? @db.VarChar(100) @map("cork_charge")
 
   reviews Review[]
+  image String? @db.VarChar(300)
   dayOff String? @db.VarChar(100) @map("day_off")
   
   phoneNumber String? @db.VarChar(100) @map("phone_number")

@@ -61,10 +61,12 @@ type DataType = {
     address?: string;
     snss?: string;
     openedAt?: Date;
+    image?: string;
 };
 
 const prisma = new PrismaClient();
 const FILE_PATH = "C:/Users/user/Desktop/seed.xlsx";
+const DEFAULT_IMAGE = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPrTZ8Wd_zfPVG6dIFJSGa_1OdYqA_dcKbgg&usqp=CAU";
 
 function contains<T extends string>(list: ReadonlyArray<T>, value: string): value is T {
     return list.some((item) => item === value);
@@ -104,7 +106,8 @@ const main = async () => {
             address,
             ...(snss && isURL(snss) && { snss }),
             // snss,
-            openedAt: openedAt ? new Date(openedAt) : undefined
+            openedAt: openedAt ? new Date(openedAt) : undefined,
+            image: DEFAULT_IMAGE
         });
     });
 
