@@ -6,6 +6,9 @@ import { router } from "./routes";
 export const startApp = () => {
     const app = express();
 
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+
     app.use(requestLoggerMiddleware);
 
     app.get("/ping", (req, res) => {
