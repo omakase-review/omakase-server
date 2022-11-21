@@ -5,7 +5,7 @@ export const dbErrorMiddleware = (err: unknown, _req: Request, res: Response, ne
     if (err instanceof PrismaClientKnownRequestError) {
         res.status(400).json({ msg: err.message });
     } else {
-        next();
+        next(err);
     }
 };
 
