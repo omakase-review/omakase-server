@@ -44,7 +44,9 @@ services:
             - 3000:${PORT}
         depends_on:
             - mysql
-        env_file:
-            - .env
+        environment:
+            - DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${DB_CONTAINER_NAME}/${MYSQL_DATABASE}
+        # env_file:
+        #     - .env
         volumes:
             - ./logs:/app/logs
