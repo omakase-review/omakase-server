@@ -6,9 +6,9 @@ RUN npm ci
 COPY src src
 COPY .env ./
 COPY prisma prisma
+RUN npm run db:generate
 RUN npm run build
 # RUN npx prisma generate
-RUN npm run db:generate
 
 RUN mkdir logs
 RUN chmod -R 777 /app/logs
