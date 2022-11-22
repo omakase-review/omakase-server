@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import TSON from "typescript-json";
-import { exist } from "../lib/check-exist-file";
-import { isURL } from "../lib/check-url";
-import { readXlsx } from "../lib/read-xlsx";
+import { exist } from "../../lib/check-exist-file";
+import { isURL } from "../../lib/check-url";
+import { readXlsx } from "../../lib/read-xlsx";
 
 // @TODO 각 string 자리가 숫자 두자리 수로 제한 되게, dot 2개 이후로 3번째 dot은 안받게
 type CustomDate1 = number;
@@ -116,12 +116,17 @@ const main = async () => {
         throw new Error("Check Your Error");
     }
 
-    const userInitialData = {
-        // @Issue `unique`이기 때문에 수정하고 실행하시기 바랍니다.
-        email: "test@gmail.com"
-    };
-    await prisma.user.create({ data: userInitialData });
+    // 유저 5명 생성하기
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < 5; i++) {
+        const userInitialData = {
+            // @Issue `unique`이기 때문에 수정하고 실행하시기 바랍니다.
+            email: `test_${i}@gmail.com`
+        };
+        await prisma.user.create({ data: userInitialData });
+    }
 
+    // 엑셀에서 읽은 데이터, restaurant 생성하기
     for (const data of datas) {
         const { snss, ...rest } = data;
         // @Issue createMany에서는 relations에 접근해 같이 생성 불가능.

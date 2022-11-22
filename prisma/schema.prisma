@@ -60,7 +60,7 @@ model Sns {
 }
 model Review {
   id Int @id @db.UnsignedInt @default(autoincrement())
-  score Decimal @db.Decimal(1, 1)
+  score Decimal @db.Decimal(2, 1)
 
   user User @relation(fields: [userId], references: [id])
   userId Int @db.UnsignedInt
