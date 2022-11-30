@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { restaurantRouter } from "./resturant";
+import { reviewRouter } from "./reviews";
 
 const router = Router();
 
@@ -8,5 +9,6 @@ const router = Router();
 // });
 
 router.use("/restaurant", restaurantRouter);
+router.use("/review", reviewRouter);
 
 export { router };
