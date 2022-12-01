@@ -14,7 +14,7 @@ $ npm run start:w // dev
 
 ```bash
 $ docker-compose up --build -d
-$ npm run db:push // .env 파일에서 localhost 실행
+$ npm run db:push
 ```
 
 #### 주의 사항

@@ -15,6 +15,7 @@ model User {
   name String? @db.VarChar(100)
 
   reviews Review[]
+  favorites Favorites[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt        DateTime?         @map("updated_at")
@@ -68,6 +69,7 @@ model Review {
   tasteStatus TasteStatus? @default(NOMAL) @map("taste_status")
   revisitStatus RevisitStatus? @default(SOSO) @map("revisit_status")
   images Images[]
+  favorites Favorites[]
 
   user User @relation(fields: [userId], references: [id])
   userId Int @db.UnsignedInt @map("user_id")
@@ -80,6 +82,21 @@ model Review {
   deletedAt        DateTime?         @map("deleted_at")
 
   @@map("reviews")
+}
+
+model Favorites {
+  id Int @id @db.UnsignedInt @default(autoincrement())
+
+  user User @relation(fields: [userId], references: [id])
+  userId Int @db.UnsignedInt @map("user_id")
+
+  review Review @relation(fields: [reviewId], references: [id])
+  reviewId Int @db.UnsignedInt @map("review_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, reviewId])
+  @@map("favorites")
 }
 
 model Images {
