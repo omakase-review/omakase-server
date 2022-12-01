@@ -18,6 +18,11 @@ export const getReviewById = async (req: Request, res: Response) => {
             serviceStatus: true,
             tasteStatus: true,
             revisitStatus: true,
+            _count: {
+                select: {
+                    favorites: true
+                }
+            },
             images: {
                 select: {
                     id: true,
@@ -30,6 +35,11 @@ export const getReviewById = async (req: Request, res: Response) => {
                     name: true,
                     image: true,
                     address: true
+                }
+            },
+            user: {
+                select: {
+                    name: true
                 }
             }
         }
