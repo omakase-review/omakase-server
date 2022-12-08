@@ -1,13 +1,23 @@
 import express from "express";
+import session from "express-session";
+import passport from "passport";
+import { router } from "./routes";
 import { dbErrorMiddleware, errorMiddleware } from "./middleware/error";
 import { requestLoggerMiddleware } from "./middleware/log";
-import { router } from "./routes";
+import passportConfig from "./passports";
+import { conf } from "./config";
 
 export const startApp = () => {
     const app = express();
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+
+    passportConfig();
+    app.use(session({ ...conf().SESSION_OPTION }));
+
+    app.use(passport.initialize());
+    app.use(passport.session());
 
     app.use(requestLoggerMiddleware);
 
