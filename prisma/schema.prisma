@@ -15,6 +15,7 @@ model User {
   name String? @db.VarChar(100)
 
   reviews Review[]
+  comments Comments[]
   favorites Favorites[]
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -70,6 +71,7 @@ model Review {
   revisitStatus RevisitStatus? @default(SOSO) @map("revisit_status")
   images Images[]
   favorites Favorites[]
+  comments Comments[]
 
   user User @relation(fields: [userId], references: [id])
   userId Int @db.UnsignedInt @map("user_id")
@@ -97,6 +99,27 @@ model Favorites {
 
   @@unique([userId, reviewId])
   @@map("favorites")
+}
+model Comments {
+  id Int @id @db.UnsignedInt @default(autoincrement())
+  text String @db.VarChar(200)
+
+  user User @relation(fields: [userId], references: [id])
+  userId Int @db.UnsignedInt @map("user_id")
+
+  review Review @relation(fields: [reviewId], references: [id])
+  reviewId Int @db.UnsignedInt @map("review_id") 
+
+  parentId Int? @db.UnsignedInt @map("parent_id")
+  parent   Comments?   @relation("ReplyComments", fields: [parentId], references: [id])
+  childs  Comments[]  @relation("ReplyComments")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime?         @map("updated_at")
+  deletedAt        DateTime?         @map("deleted_at")
+
+  @@unique([userId, reviewId])
+  @@map("comments")
 }
 
 model Images {
