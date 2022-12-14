@@ -6,10 +6,13 @@ export const createFavorite = async (req: Request, res: Response) => {
     if (!id) {
         throw new Error("No Review Id");
     }
+    if (!req.id) {
+        throw new Error("No User");
+    }
+
     const favorite = await Prisma.favorites.create({
         data: {
-            // @TODO 회원가입/로그인 구현되면 수정.
-            userId: 1,
+            userId: req.id,
             reviewId: Number(id)
         }
     });

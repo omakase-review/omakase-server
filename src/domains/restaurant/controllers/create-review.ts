@@ -18,9 +18,10 @@ export const createReview = async (req: Request<{ id?: string }, unknown, ReqBod
         throw new Error("No Restaurant Id");
     }
 
-    // @TODO 로그인 회원가입 구현할 때 수정.
-    // const userId = req.user.id;
-    const userId = 1;
+    if (!req.id) {
+        throw new Error("No User");
+    }
+    // const userId = req.id;
 
     const { success, errors: _errors } = TSON.validate<ReqBody>({ ...req.body });
 
@@ -38,7 +39,7 @@ export const createReview = async (req: Request<{ id?: string }, unknown, ReqBod
             serviceStatus,
             tasteStatus,
             revisitStatus,
-            userId,
+            userId: req.id,
             restaurantId: Number(req.params.id)
         }
     });
