@@ -4,134 +4,151 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
-  id Int @id @db.UnsignedInt @default(autoincrement())
-  email String @db.VarChar(100) @unique
-  name String? @db.VarChar(100)
+  id    Int     @id @default(autoincrement()) @db.UnsignedInt
+  email String  @unique @db.VarChar(100)
+  name  String? @db.VarChar(100)
 
-  reviews Review[]
-  comments Comments[]
+  reviews   Review[]
+  comments  Comments[]
   favorites Favorites[]
+  auth      Auth[]
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime?         @map("updated_at")
-  deletedAt        DateTime?         @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   @@map("users")
 }
 
+model Auth {
+  id       Int      @id @default(autoincrement()) @db.UnsignedInt
+  User     User?    @relation(fields: [userId], references: [id])
+  userId   Int?     @map("user_id") @db.UnsignedInt
+  type     AuthType
+  socialId String   @map("social_id")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([userId, socialId, type])
+  @@map("auths")
+}
+
 model Restaurant {
-  id Int @id @db.UnsignedInt @default(autoincrement())
-  name String? @db.VarChar(100)
-  address String? @db.VarChar(100)
-  gu String? @db.VarChar(10)
-  lunchPrice Int? @db.UnsignedInt @map("lunch_price")
-  dinnerPrice Int? @db.UnsignedInt @map("dinner_price")
-  corkCharge String? @db.VarChar(100) @map("cork_charge")
+  id          Int     @id @default(autoincrement()) @db.UnsignedInt
+  name        String? @db.VarChar(100)
+  address     String? @db.VarChar(100)
+  gu          String? @db.VarChar(10)
+  lunchPrice  Int?    @map("lunch_price") @db.UnsignedInt
+  dinnerPrice Int?    @map("dinner_price") @db.UnsignedInt
+  corkCharge  String? @map("cork_charge") @db.VarChar(100)
 
   reviews Review[]
-  image String? @db.VarChar(300)
-  dayOff String? @db.VarChar(100) @map("day_off")
-  
-  phoneNumber String? @db.VarChar(100) @map("phone_number")
-  openingHours String? @db.VarChar(100) @map("opening_hours")
-  parking Boolean? @default(false)
-  snss Sns[]
+  image   String?  @db.VarChar(300)
+  dayOff  String?  @map("day_off") @db.VarChar(100)
 
-  openedAt DateTime? @map("opened_at")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime?         @map("updated_at")
-  deletedAt        DateTime?         @map("deleted_at")
+  phoneNumber  String?  @map("phone_number") @db.VarChar(100)
+  openingHours String?  @map("opening_hours") @db.VarChar(100)
+  parking      Boolean? @default(false)
+  snss         Sns[]
+
+  openedAt  DateTime? @map("opened_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   @@map("restaurants")
 }
 
 model Sns {
-  id Int @id @db.UnsignedInt @default(autoincrement())
-  owner Restaurant @relation(fields: [ownerId], references: [id])
-  ownerId Int @db.UnsignedInt @map("owner_id")
+  id      Int        @id @default(autoincrement()) @db.UnsignedInt
+  owner   Restaurant @relation(fields: [ownerId], references: [id])
+  ownerId Int        @map("owner_id") @db.UnsignedInt
 
   link String @db.VarChar(100)
 
   @@map("snss")
 }
+
 model Review {
-  id Int @id @db.UnsignedInt @default(autoincrement())
-  score Decimal @db.Decimal(2, 1)
-  title String @db.VarChar(20)
-  description String @db.VarChar(100)
+  id          Int     @id @default(autoincrement()) @db.UnsignedInt
+  score       Decimal @db.Decimal(2, 1)
+  title       String  @db.VarChar(20)
+  description String  @db.VarChar(100)
 
   serviceStatus ServiceStatus? @default(NOMAL) @map("service_status")
-  tasteStatus TasteStatus? @default(NOMAL) @map("taste_status")
+  tasteStatus   TasteStatus?   @default(NOMAL) @map("taste_status")
   revisitStatus RevisitStatus? @default(SOSO) @map("revisit_status")
-  images Images[]
-  favorites Favorites[]
-  comments Comments[]
+  images        Images[]
+  favorites     Favorites[]
+  comments      Comments[]
 
-  user User @relation(fields: [userId], references: [id])
-  userId Int @db.UnsignedInt @map("user_id")
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @map("user_id") @db.UnsignedInt
 
-  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
-  restaurantId Int @db.UnsignedInt @map("restaurant_id")
-  
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime?         @map("updated_at")
-  deletedAt        DateTime?         @map("deleted_at")
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId Int        @map("restaurant_id") @db.UnsignedInt
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   @@map("reviews")
 }
 
 model Favorites {
-  id Int @id @db.UnsignedInt @default(autoincrement())
+  id Int @id @default(autoincrement()) @db.UnsignedInt
 
-  user User @relation(fields: [userId], references: [id])
-  userId Int @db.UnsignedInt @map("user_id")
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @map("user_id") @db.UnsignedInt
 
-  review Review @relation(fields: [reviewId], references: [id])
-  reviewId Int @db.UnsignedInt @map("review_id")
+  review   Review @relation(fields: [reviewId], references: [id])
+  reviewId Int    @map("review_id") @db.UnsignedInt
 
   createdAt DateTime @default(now()) @map("created_at")
 
   @@unique([userId, reviewId])
   @@map("favorites")
 }
+
 model Comments {
-  id Int @id @db.UnsignedInt @default(autoincrement())
+  id   Int    @id @default(autoincrement()) @db.UnsignedInt
   text String @db.VarChar(200)
 
-  user User @relation(fields: [userId], references: [id])
-  userId Int @db.UnsignedInt @map("user_id")
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @map("user_id") @db.UnsignedInt
 
-  review Review @relation(fields: [reviewId], references: [id])
-  reviewId Int @db.UnsignedInt @map("review_id") 
+  review   Review @relation(fields: [reviewId], references: [id])
+  reviewId Int    @map("review_id") @db.UnsignedInt
 
-  parentId Int? @db.UnsignedInt @map("parent_id")
-  parent   Comments?   @relation("ReplyComments", fields: [parentId], references: [id])
-  childs  Comments[]  @relation("ReplyComments")
+  parentId Int?       @map("parent_id") @db.UnsignedInt
+  parent   Comments?  @relation("ReplyComments", fields: [parentId], references: [id])
+  childs   Comments[] @relation("ReplyComments")
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime?         @map("updated_at")
-  deletedAt        DateTime?         @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   @@unique([userId, reviewId])
   @@map("comments")
 }
 
 model Images {
-  id Int @id @db.UnsignedInt @default(autoincrement())
+  id  Int    @id @default(autoincrement()) @db.UnsignedInt
   url String @db.VarChar(200)
 
-  review Review @relation(fields: [reviewId], references: [id])
-  reviewId Int @db.UnsignedInt @map("review_id")
+  review   Review @relation(fields: [reviewId], references: [id])
+  reviewId Int    @map("review_id") @db.UnsignedInt
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime?         @map("updated_at")
-  deletedAt        DateTime?         @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
   @@map("images")
 }
@@ -141,13 +158,23 @@ enum ServiceStatus {
   NOMAL
   GOOD
 }
+
 enum TasteStatus {
   SOSO
   NOMAL
   UMAI
 }
+
 enum RevisitStatus {
   NO
   SOSO
   YES
+}
+
+enum AuthType {
+  KaKao
+  Google
+  Client
+  Admin
+  Etc
 }
