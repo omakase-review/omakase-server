@@ -20,11 +20,16 @@ $ docker-compose up --build -d
 
 ### seed
 
-1.  seed.ts 실행
+1.  seed.js 실행
+    -   `npm install -g dotenv-cli` 사용.
+2.  엑셀파일 경로
+    -   src/db/\*
+    *   다운로드 : https://www.notion.so/3490e796b8514a8996e9fb9da8251ed8
 
-> `npm run build && nf -e .env run node ./dist/db/seed/seed.js`
-
-`npm i -g foreman` nf 사용.
+```sh
+$ npm run build
+$ dotenv -e .env -- node ./dist/db/seed/seed.js
+```
 
 #### 도커 접속
 
