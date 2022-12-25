@@ -32,5 +32,5 @@ export const createComment = async (req: Request<ReqParam, unknown, ReqBody>, re
         }
     });
 
-    res.json(comment);
+    res.json({ data: comment });
 };

@@ -18,6 +18,23 @@ export const getReviewById = async (req: Request, res: Response) => {
             serviceStatus: true,
             tasteStatus: true,
             revisitStatus: true,
+            comments: {
+                where: {
+                    parentId: null
+                },
+                select: {
+                    id: true,
+                    text: true,
+                    user: true,
+                    childs: {
+                        select: {
+                            id: true,
+                            text: true,
+                            user: true
+                        }
+                    }
+                }
+            },
             _count: {
                 select: {
                     favorites: true
