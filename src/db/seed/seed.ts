@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import path from "path";
 import TSON from "typescript-json";
 import { exist } from "../../lib/check-exist-file";
 import { isURL } from "../../lib/check-url";
@@ -65,7 +66,7 @@ type DataType = {
 };
 
 const prisma = new PrismaClient();
-const FILE_PATH = "C:/Users/user/Desktop/seed.xlsx";
+const FILE_PATH = path.join(process.cwd(), "src/db/seed.xlsx");
 const DEFAULT_IMAGE = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPrTZ8Wd_zfPVG6dIFJSGa_1OdYqA_dcKbgg&usqp=CAU";
 
 function contains<T extends string>(list: ReadonlyArray<T>, value: string): value is T {
