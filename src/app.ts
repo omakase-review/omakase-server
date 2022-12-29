@@ -6,6 +6,7 @@ import { dbErrorMiddleware, errorMiddleware } from "./middleware/error";
 import { requestLoggerMiddleware } from "./middleware/log";
 import passportConfig from "./passports";
 import { conf } from "./config";
+import path from "path";
 
 export const startApp = () => {
     const app = express();
@@ -21,11 +22,13 @@ export const startApp = () => {
 
     app.use(requestLoggerMiddleware);
 
-    app.get("/ping", (req, res) => {
+    app.use("/sushi", express.static(conf().IMAGES_DIR_PATH))
+
+    app.get("/sushi/ping", (req, res) => {
         res.send("pong");
     });
 
-    app.use("/api/v1", router);
+    app.use("/sushi/api/v1", router);
 
     app.use("*", (req, res) => {
         res.status(404).json({ msg: "404" });

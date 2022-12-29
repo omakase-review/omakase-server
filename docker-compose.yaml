@@ -58,3 +58,4 @@ services:
             - .env
         volumes:
             - ./logs:/app/logs
+            - ./images:/app/images
