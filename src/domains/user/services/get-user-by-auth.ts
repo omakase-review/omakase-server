@@ -1,12 +1,12 @@
-import { AuthType, PrismaClient } from "@prisma/client";
+import { SocialType, PrismaClient } from "@prisma/client";
 
-export const getUserByAuth = ({ email,socialId ,type}: { email: string,socialId: string ,type: AuthType}, prisma: PrismaClient) => {
+export const getUserByAuth = ({ email,socialId ,type}: { email: string,socialId: string ,type: SocialType}, prisma: PrismaClient) => {
     return prisma.user.findUnique({
         where: {
             email
         },
         include: {
-            auth: {
+            socials: {
                 where: {
                     socialId,
                     type

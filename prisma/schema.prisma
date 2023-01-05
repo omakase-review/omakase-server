@@ -18,7 +18,8 @@ model User {
   reviews   Review[]
   comments  Comments[]
   favorites Favorites[]
-  auth      Auth[]
+  auth      Auth?
+  socials   Social[]
 
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @map("updated_at")
@@ -28,17 +29,28 @@ model User {
 }
 
 model Auth {
-  id       Int      @id @default(autoincrement()) @db.UnsignedInt
-  User     User?    @relation(fields: [userId], references: [id])
-  userId   Int?     @map("user_id") @db.UnsignedInt
-  type     AuthType
-  socialId String   @map("social_id")
+  id     Int   @id @default(autoincrement()) @db.UnsignedInt
+  User   User? @relation(fields: [userId], references: [id])
+  userId Int?  @unique @map("user_id") @db.UnsignedInt
+
+  type AuthType
 
   createdAt DateTime  @default(now()) @map("created_at")
   deletedAt DateTime? @map("deleted_at")
 
-  @@unique([userId, socialId, type])
   @@map("auths")
+}
+
+model Social {
+  id Int @id @default(autoincrement()) @db.UnsignedInt
+
+  User     User?      @relation(fields: [userId], references: [id])
+  userId   Int?       @unique @map("user_id") @db.UnsignedInt
+  type     SocialType
+  socialId String     @map("social_id")
+
+  @@unique([socialId, type])
+  @@map("socials")
 }
 
 model Restaurant {
@@ -173,9 +185,17 @@ enum RevisitStatus {
 }
 
 enum AuthType {
-  KaKao
-  Google
-  Client
+  SuperAdmin
   Admin
+  User
+  Etc
+}
+
+enum SocialType {
+  Kakao
+  Google
+  Apple
+  Facebook
+  Naver
   Etc
 }

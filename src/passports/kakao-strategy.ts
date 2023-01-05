@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
-import { AuthType } from "@prisma/client";
+import { AuthType, SocialType } from "@prisma/client";
 import passport from "passport";
 import { Strategy as KakaoStrategy } from "passport-kakao";
 import { conf } from "../config";
@@ -18,12 +18,12 @@ export default () => {
                 // return cb(new BadReqError("Not Found Email"));
             }
 
-            const type = AuthType.KaKao;
+            const type = SocialType.Kakao;
 
             const user = await getUserByAuth({ email, type, socialId: id }, prisma);
 
             if (!user) {
-                const createdUser = await createUserWithAuth({ email,type, socialId: id }, prisma);
+                const createdUser = await createUserWithAuth({ email, type, socialId: id }, prisma);
 
                 return cb(null, { ...createdUser, accessToken });
             }
