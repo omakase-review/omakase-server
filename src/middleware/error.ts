@@ -10,5 +10,6 @@ export const dbErrorMiddleware = (err: unknown, _req: Request, res: Response, ne
 };
 
 export const errorMiddleware = (_err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    console.log("_err :", _err);
     res.status(500).json({ msg: "error test" });
 };
