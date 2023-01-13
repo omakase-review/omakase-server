@@ -5,6 +5,7 @@ import { getHighScoreRestaurant } from "../domains/restaurant/controllers/get-hi
 import { getRecentRestaurants } from "../domains/restaurant/controllers/get-recent-restaurants";
 import { controllerHandler } from "../lib/controller-handler";
 import { authJWT } from "../middleware/auth";
+import { upload } from "../middleware/upload";
 
 const restaurantRouter = Router();
 
@@ -15,6 +16,6 @@ const restaurantRouter = Router();
 restaurantRouter.get("/", controllerHandler(getRecentRestaurants));
 restaurantRouter.get("/lunch", controllerHandler(getCheapLunchRestaurant));
 restaurantRouter.get("/score", controllerHandler(getHighScoreRestaurant));
-restaurantRouter.post("/:id/review", authJWT, controllerHandler(createReview));
+restaurantRouter.post("/:id/review", authJWT, upload.fields([{name: "images"}]), controllerHandler(createReview));
 
 export { restaurantRouter };

@@ -1,3 +1,5 @@
+import path from "path";
+
 export const conf = () => {
     const PORT = process.env.PORT || 3000;
     const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
@@ -23,12 +25,19 @@ export const conf = () => {
         }
     };
 
+    const IMAGES_DIR_PATH = path.join(process.cwd(), "images");
+    const MAX_FILE_SIZE = Number(process.env.MAX_FILE_SIZE) || 600 * 1000; // 600kb
+    const MAX_FILES = Number(process.env.MAX_FILES) || 10;
+
     return {
         PORT,
         REDIS_URL,
         JWT_SECRET,
         CLIENT_DOMAIN,
         KAKAO_CONFIG,
-        SESSION_OPTION
+        SESSION_OPTION,
+        IMAGES_DIR_PATH,
+        MAX_FILES,
+        MAX_FILE_SIZE
     };
 };
