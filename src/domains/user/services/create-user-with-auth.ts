@@ -1,7 +1,13 @@
-import { SocialType, PrismaClient } from "@prisma/client";
+import { SocialType, PrismaClient, AuthType } from "@prisma/client";
 
-export const createUserWithAuth = ({ email,socialId,type }: { email: string;socialId:string, type: SocialType }, prisma: PrismaClient) => {
+export const createUserWithAuth = ({ email, social: {socialId, type}, auth: { authType } }: { email: string; social: { socialId: string, type: SocialType}, auth: { authType: AuthType } }, prisma: PrismaClient) => {
     return prisma.user.create({
+        select: {
+            id: true,
+            email: true,
+            socials: true,
+            auth: true,
+        },
         data: {
             email,
             socials: {
@@ -9,6 +15,11 @@ export const createUserWithAuth = ({ email,socialId,type }: { email: string;soci
                     socialId,
                     type
                 }]
+            },
+            auth: {
+                create: {
+                    type: authType
+                }
             }
         }
     });
