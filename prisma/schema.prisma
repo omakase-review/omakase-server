@@ -62,9 +62,11 @@ model Restaurant {
   dinnerPrice Int?    @map("dinner_price") @db.UnsignedInt
   corkCharge  String? @map("cork_charge") @db.VarChar(100)
 
-  reviews Review[]
-  image   String?  @db.VarChar(300)
-  dayOff  String?  @map("day_off") @db.VarChar(100)
+  reviews     Review[]
+  reviewCount Int      @default(0) @map("review_count") @db.UnsignedInt
+  totalScore  Decimal  @default(0) @map("total_score") @db.Decimal(2, 1)
+  image       String?  @db.VarChar(300)
+  dayOff      String?  @map("day_off") @db.VarChar(100)
 
   phoneNumber  String?  @map("phone_number") @db.VarChar(100)
   openingHours String?  @map("opening_hours") @db.VarChar(100)
