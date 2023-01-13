@@ -38,21 +38,65 @@ export const createReview = async (req: Request<{ id?: string }, unknown, ReqBod
 
     const { title, score, description, serviceStatus, tasteStatus, revisitStatus } = req.body;
 
-    const reviews = await Prisma.review.create({
-        data: {
-            title,
-            score,
-            description,
-            serviceStatus,
-            tasteStatus,
-            revisitStatus,
-            userId: req.id,
-            restaurantId: Number(req.params.id),
-            images: {
-                create: files.map( url => ({url}))
-            }
+    const _id = Number(id);
 
+    const r = await Prisma.restaurant.findUnique({
+        select: {
+            totalScore: true,
+            reviewCount: true,
+        },
+        where: {
+            id: _id
         }
     });
+
+    if(!r){
+        throw new Error("Not found Restaurant");
+    }
+
+    const { totalScore, reviewCount } = r;
+
+    // 소수점 2 자리까지
+    const numerator = Number(totalScore) * reviewCount + score;
+    const denominator = r!.reviewCount + 1;
+
+    const _totalScore = Math.floor(numerator / denominator * 100) / 100;
+
+    const reviews = await Prisma.$transaction(async (tx) => {
+        await tx.restaurant.update({
+            where: {
+                id: _id
+            },
+            data: {
+                reviewCount: {
+                    increment: 1
+                },
+                totalScore: _totalScore
+            }
+        });
+    
+        const reviews = await tx.review.create({
+            data: {
+                title,
+                score,
+                description,
+                serviceStatus,
+                tasteStatus,
+                revisitStatus,
+                userId: req.id,
+                restaurantId: _id,
+                images: {
+                    create: files.map( url => ({url}))
+                }
+    
+            }
+        });
+
+        return reviews
+    }, {
+        maxWait: 5000,
+        timeout: 10000,
+    });
+
     res.status(200).json({ data: reviews });
 };
