@@ -8,34 +8,54 @@ import { Prisma as _Prisma } from "@prisma/client"
 // BigInt.prototype.toJSON = function() { return this.toString() }
 (BigInt.prototype as any).toJSON = function () {
     return this.toString();
-  };
+};
+
+type RestaurantsReturnType = {
+    id: number, 
+    name: string, 
+    image: string, 
+    lunch_price: number, 
+    dinner_price: number, 
+    address: string, 
+    parking: boolean,
+    review_count: number, 
+    total_score: number, 
+    created_at: Date, 
+    _cursor: number
+}[];
 
 const DEFAULT_TAKE = 5;
 
 export const getRestaurantsByScore = async (req: Request<unknown, unknown, unknown, {take?: string, cursor?: string}>, res: Response) => {
     const take = Number(req.query.take) || DEFAULT_TAKE;
+    if(take < 1){
+        throw new Error("take must be at least 1");
+    }
     const cursor = Number(req.query.cursor) || null
 
 
-    const _cursorSql = _Prisma.sql`CONCAT(LPAD(FLOOR(total_score * 100), 10, '0'), FLOOR(UNIX_TIMESTAMP(created_at)))`;
+    const _cursorAlias = _Prisma.sql`CONCAT(LPAD(FLOOR(total_score * 100), 10, '0'), FLOOR(UNIX_TIMESTAMP(created_at)))`;
+
+    const _cursorSql = cursor 
+        ? _Prisma.sql`WHERE ${_cursorAlias} < ${cursor}` 
+        : _Prisma.empty
     // 리뷰 개수 순 페이지네이션
-    const restaurants = await Prisma.$queryRaw<{id: number, name: string, image: string, created_at: Date, review_count: number, total_score: number, _cursor: number}[]>`
+    const restaurants = await Prisma.$queryRaw<RestaurantsReturnType>`
         SELECT 
             id, 
             name,
             image,
-            created_at,
+            lunch_price,
+            dinner_price,
+            address.
+            parking,
             review_count,
-            total_score, 
-            ${_cursorSql} _cursor 
+            total_score,
+            created_at, 
+            ${_cursorAlias} _cursor 
         FROM 
             restaurants
-        ${
-            // cursor 쿼리가 없으면 total_score 최대에서 부터 take 만큼
-            cursor 
-                ? _Prisma.sql`WHERE ${_cursorSql} < ${cursor}` 
-                : _Prisma.empty
-        }
+        ${_cursorSql}
         ORDER BY 
             total_score DESC, 
             created_at DESC 
